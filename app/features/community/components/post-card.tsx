@@ -10,6 +10,9 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "~/common/components/ui/avatar";
+import { Link } from "react-router";
+import { ChevronUpIcon } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 interface PostCardProps {
   id: string;
@@ -18,37 +21,59 @@ interface PostCardProps {
   authorAvatarUrl?: string;
   category: string;
   postedAt: string;
+  expanded?: boolean;
+  votesCount?: number;
 }
 
 export function PostCard({
+  id,
   title,
   authorName,
   authorAvatarUrl,
   category,
   postedAt,
+  expanded = false,
+  votesCount = 0,
 }: PostCardProps) {
   return (
-    <Card className="bg-transparent hover:bg-card/50 transition-colors">
-      <CardHeader className="flex flex-row items-center gap-2">
-        <Avatar className="size-14">
-          <AvatarFallback>{authorName[0].toUpperCase()}</AvatarFallback>
-          {authorAvatarUrl && <AvatarImage src={authorAvatarUrl} />}
-        </Avatar>
-        <div className="space-y-2">
-          <CardTitle>{title}</CardTitle>
-          <div className="flex gap-2 text-xs leading-none text-muted-foreground">
-            <span>{authorName} on</span>
-            <span>{category}</span>
-            <span>•</span>
-            <span>{postedAt}</span>
+    <Link to={`/community/${id}`} className="block">
+      <Card
+        className={cn(
+          "bg-transparent hover:bg-card/50 transition-colors",
+          expanded ? "flex flex-row items-center justify-between" : "",
+        )}
+      >
+        <CardHeader className="flex flex-row items-center gap-2">
+          <Avatar className="size-14">
+            <AvatarFallback>{authorName[0].toUpperCase()}</AvatarFallback>
+            {authorAvatarUrl && <AvatarImage src={authorAvatarUrl} />}
+          </Avatar>
+          <div className="space-y-2">
+            <CardTitle>{title}</CardTitle>
+            <div className="flex gap-2 text-xs leading-none text-muted-foreground">
+              <span>{authorName} on</span>
+              <span>{category}</span>
+              <span>•</span>
+              <span>{postedAt}</span>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardFooter className="flex justify-end">
-        <Button variant="link" asChild>
-          Reply &rarr;
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardHeader>
+        {!expanded && (
+          <CardFooter className="flex justify-end">
+            <Button variant="link" asChild>
+              Reply &rarr;
+            </Button>
+          </CardFooter>
+        )}
+        {expanded && (
+          <CardFooter className="flex justify-end pt-0 pb-0">
+            <Button variant="outline" className="flex flex-col h-14">
+              <ChevronUpIcon className="size-4 shirink-0" />
+              <span>{votesCount}</span>
+            </Button>
+          </CardFooter>
+        )}
+      </Card>
+    </Link>
   );
 }
