@@ -59,14 +59,25 @@ export const product_upvotes = pgTable(
   }),
 );
 
-export const reviews = pgTable("reviews", {
-    review_id:bigint({mode:"number"}).primaryKey().generatedByDefaultAsIdentity(),
-    product_id:bigint({mode:"number"}).references(()=>products.product_id, {onDelete:"cascade"}),
-    profile_id:uuid().references(()=>profiles.profile_id, {onDelete:"cascade"}),
-    rating:integer().notNull(),
-    review:text().notNull(),
-    created_at:timestamp().notNull().defaultNow(),
-    updated_at:timestamp().notNull().defaultNow(),
-}, (table) => ({
-    pk: [check('rating_check', sql`${table.rating} BETWEEN 1 AND 5`)]
-}))
+export const reviews = pgTable(
+  "reviews",
+  {
+    review_id: bigint({ mode: "number" })
+      .primaryKey()
+      .generatedByDefaultAsIdentity(),
+    product_id: bigint({ mode: "number" }).references(
+      () => products.product_id,
+      { onDelete: "cascade" },
+    ),
+    profile_id: uuid().references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    }),
+    rating: integer().notNull(),
+    review: text().notNull(),
+    created_at: timestamp().notNull().defaultNow(),
+    updated_at: timestamp().notNull().defaultNow(),
+  },
+  (table) => ({
+    pk: [check("rating_check", sql`${table.rating} BETWEEN 1 AND 5`)],
+  }),
+);
